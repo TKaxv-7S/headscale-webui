@@ -558,6 +558,61 @@ function load_modal_rename_machine(machine_id) {
     })
 }
 
+function load_modal_change_ip_machine(machine_id) {
+    document.getElementById('modal_content').innerHTML = loading()
+    document.getElementById('modal_title').innerHTML = "Loading..."
+    document.getElementById('modal_confirm').className = "green btn-flat white-text"
+    document.getElementById('modal_confirm').innerText = "Change Ip"
+    var data = { "id": machine_id }
+    $.ajax({
+        type: "POST",
+        url: "api/machine_information",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (response) {
+            modal = document.getElementById('card_modal');
+            modal_title = document.getElementById('modal_title');
+            modal_body = document.getElementById('modal_content');
+            modal_confirm = document.getElementById('modal_confirm');
+
+            modal_title.innerHTML = "Change machine Ip?"
+            body_html = `
+            <ul class="collection">
+                <li class="collection-item avatar">
+                    <i class="material-icons circle">devices</i>
+                    <span class="title">Information</span>
+                    <p>You are about to change ip</p>
+                </li>
+            </ul>
+            <h6>New Ip</h6>
+            <div class="input-field">
+                <input value='${response.machine.ipAddresses.toString()}' id="new_ip_form" type="text">
+                <label for="new_ip_form" class="active">New Machine Ip</label>
+            </div>
+            <h6>Machine Information</h6>
+            <table class="highlight">
+                <tbody>
+                    <tr>
+                        <td><b>Machine ID</b></td>
+                        <td>${response.machine.id}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Hostname</b></td>
+                        <td>${response.machine.name}</td>
+                    </tr>
+                    <tr>
+                        <td><b>User</b></td>
+                        <td>${response.machine.user.name}</td>
+                    </tr>
+                </tbody>
+            </table>
+            `
+            modal_body.innerHTML = body_html
+            modal_confirm.setAttribute('onclick', 'change_ip_machine(' + machine_id + ')')
+        }
+    })
+}
+
 function load_modal_add_machine() {
     $.ajax({
         type: "POST",
@@ -710,6 +765,46 @@ function rename_machine(machine_id) {
                 M.toast({ html: 'Machine ' + machine_id + ' renamed to ' + escapeHTML(new_name) });
             } else {
                 load_modal_generic("error", "Error setting the machine name", "Headscale response:  " + JSON.stringify(response.body.message))
+            }
+        }
+    })
+}
+
+function change_ip_machine(machine_id) {
+    var new_ips = document.getElementById('new_ip_form').value;
+
+    // String to test against
+    // If there are characters other than - and alphanumeric, throw an error
+    if (new_ips.includes(' ')) { load_modal_generic("error", "ip cannot have spaces", "Allowed characters are dashes (-) and alphanumeric characters"); return }
+    // If the new_ip is empty, throw an error
+    if (!new_ips) { load_modal_generic("error", "Ip can't be empty", "Please enter a machine ip before submitting."); return }
+
+    var new_ips_obj = {
+        "new_ip_addresses": new_ips.split(',')
+    };
+    var data = { "id": machine_id, "new_ip": JSON.stringify(new_ips_obj) };
+
+    $.ajax({
+        type: "POST",
+        url: "api/change_ip_machine",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (response) {
+
+            if (response.status == "True") {
+                // Get the modal element and close it
+                modal_element = document.getElementById('card_modal')
+                M.Modal.getInstance(modal_element).close()
+
+                let machine_ips = "<ul>"
+                for (let ip_address of response.body.machine.ipAddresses) {
+                    machine_ips = machine_ips + "<li>" + ip_address + "</li>"
+                }
+                machine_ips = machine_ips+"</ul>"
+                document.getElementById(machine_id + '-ip-container').innerHTML = machine_ips
+                M.toast({ html: 'Machine ' + machine_id + ' changed ip to ' + escapeHTML(new_ips) });
+            } else {
+                load_modal_generic("error", "Error setting the machine ip", "Headscale response:  " + JSON.stringify(response.body.message))
             }
         }
     })

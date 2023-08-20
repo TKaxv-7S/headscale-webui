@@ -26,12 +26,14 @@
                 <span class="title">Machine Actions</span>
                 <p class="hide-on-small-only">
                     <a href="#card_modal" onclick='load_modal_rename_machine( "{{ machine_id }}" )' class="modal-trigger waves-effect waves-light btn-small tooltipped"     data-tooltip="Rename this machine.">Rename</a>
+                    <a href="#card_modal" onclick='load_modal_change_ip_machine( "{{ machine_id }}" )' class="modal-trigger waves-effect waves-light btn-small tooltipped"     data-tooltip="Rename this machine.">ChangeIp</a>
                     <a href="#card_modal" onclick='load_modal_move_machine  ( "{{ machine_id }}" )' class="modal-trigger waves-effect waves-light btn-small tooltipped"     data-tooltip="Move this machine to another user.">Move</a>
                     <a href="#card_modal" onclick='load_modal_delete_machine( "{{ machine_id }}" )' class="modal-trigger red waves-effect waves-light btn-small tooltipped" data-tooltip="Remove this machine.">Delete</a>
                 </p>
                 <p class="show-on-small hide-on-med-and-up hide-on-large-only hide-on-med-only">
                     <ul class="show-on-small hide-on-med-and-up hide-on-large-only hide-on-med-only">
                         <li><a href="#card_modal" onclick='load_modal_rename_machine( "{{ machine_id }}" )' class="modal-trigger waves-effect waves-light btn-small tooltipped"     data-tooltip="Rename this machine.">Rename</a></li>
+                        <li><a href="#card_modal" onclick='load_modal_change_ip_machine( "{{ machine_id }}" )' class="modal-trigger waves-effect waves-light btn-small tooltipped"     data-tooltip="Rename this machine.">ChangeIp</a></li>
                         <li><a href="#card_modal" onclick='load_modal_move_machine  ( "{{ machine_id }}" )' class="modal-trigger waves-effect waves-light btn-small tooltipped"     data-tooltip="Move this machine to another user.">Move</a></li>
                         <li><a href="#card_modal" onclick='load_modal_delete_machine( "{{ machine_id }}" )' class="modal-trigger red waves-effect waves-light btn-small tooltipped" data-tooltip="Remove this machine.">Delete</a></li>
                     </ul>
@@ -50,7 +52,7 @@
             <li class="collection-item avatar">
                 <i class="material-icons circle">network_wifi</i>
                 <span class="title">IP Addresses</span>
-                <p>{{ machine_ips}}</p>
+                <div id="{{ machine_id }}-ip-container">{{ machine_ips}}</div>
             </li>
             <li class="collection-item avatar">
                 <i class="material-icons circle">access_time</i>

@@ -287,6 +287,25 @@ def rename_machine(url, api_key, machine_id, new_name):
         app.logger.error("Machine rename failed!  %s", str(response.json()))
     return {"status": status, "body": response.json()}
 
+# Rename "machine_id" with name "new_ip"
+def change_ip_machine(url, api_key, machine_id, new_ip):
+    app.logger.info("Change Ip machine %s new_ip %s", str(machine_id), str(new_ip))
+    response = requests.post(
+        str(url)+"/api/v1/machine/"+str(machine_id)+"/changeipaddresses",
+        data=new_ip,
+        headers={
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+str(api_key)
+        }
+    )
+    status = "True" if response.status_code == 200 else "False"
+    if response.status_code == 200:
+        app.logger.info("Machine Changed Ip")
+    else:
+        app.logger.error("Machine change ip failed!  %s", str(response.json()))
+    return {"status": status, "body": response.json()}
+
 # Gets routes for the passed machine_id
 def get_machine_routes(url, api_key, machine_id):
     app.logger.info("Getting routes for machine %s", str(machine_id))

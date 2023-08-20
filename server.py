@@ -408,6 +408,17 @@ def rename_machine_page():
 
     return headscale.rename_machine(url, api_key, machine_id, new_name)
 
+@app.route('/api/change_ip_machine', methods=['POST'])
+@oidc.require_login
+def change_ip_machine_page():
+    json_response = request.get_json()
+    machine_id    = escape(json_response['id'])
+    new_ip      = json_response['new_ip']
+    url           = headscale.get_url()
+    api_key       = headscale.get_api_key()
+
+    return headscale.change_ip_machine(url, api_key, machine_id, new_ip)
+
 @app.route('/api/move_user', methods=['POST'])
 @oidc.require_login
 def move_user_page():
